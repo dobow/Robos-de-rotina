@@ -165,14 +165,29 @@ public class AddStep {
 
 									Actions action = new Actions(driver);
 //									action.dragAndDrop(sourceElement, sourceElement).build().perform();
-									action.clickAndHold(sourceElement).perform();
-//									sourceElement = wait.until(
-//											ExpectedConditions.visibilityOfElementLocated(By.xpath(lblStepToDrag)));
+//									action.clickAndHold(sourceElement).perform();
+									sourceElement = wait.until(
+											ExpectedConditions.visibilityOfElementLocated(By.xpath(lblStepToDrag)));
+									System.out.println("Source element: x->" + sourceElement.getLocation().x + " y->"
+											+ sourceElement.getLocation().y);
+
 //
-//									WebElement destElement = wait.until(
-//											ExpectedConditions.visibilityOfElementLocated(By.xpath(lblStepAfter)));
-//									action.moveToElement(destElement).pause(1).click();
-//									esperar(2);
+									esperar(2);
+									WebElement destElement = wait.until(
+											ExpectedConditions.visibilityOfElementLocated(By.xpath(lblStepAfter)));
+									System.out.println("Dest element: x->" + destElement.getLocation().x + " y->"
+											+ destElement.getLocation().y);
+//									action.moveToElement(destElement).pause(1)
+//											.moveByOffset(destElement.getLocation().x + 100,
+//													destElement.getLocation().y + 160)
+//											.click().build().perform();
+
+									bot.mouseMove(100, 800);
+									esperar(2);
+									bot.mouseMove(900, 1000);
+									esperar(2);
+									bot.mouseMove( 500,  500);
+									esperar(2);
 								} else {
 									// cancelar e ir pro proximo
 									List<WebElement> lBtnCancel = driver.findElements(By.xpath(btnCancel));
@@ -278,6 +293,7 @@ public class AddStep {
 	private static void esperar(int sec) {
 		try {
 			Thread.sleep(sec * 1000);
+			System.out.println("aguardando");
 		} catch (Exception ignorar) {
 		}
 	}
