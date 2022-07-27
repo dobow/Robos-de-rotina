@@ -7,10 +7,13 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,25 +32,41 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class GeradorDeReport {
-	
-	final static String login = "";
-	final static String password = "";
+
+	static String login = "";
+	static String password = "";
 	private static WebDriver driver = null;
+
+	public static Properties getProp() throws IOException {
+		Properties props = new Properties();
+		FileInputStream file = new FileInputStream("./configs/config.properties");
+		props.load(file);
+		return props;
+
+	}
 
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws InterruptedException {
+		Properties prop;
+		try {
+			prop = getProp();
+			login = prop.getProperty("app.login");
+			password = prop.getProperty("app.senha");
+		} catch (IOException e2) {
+		}
 		System.setProperty("webdriver.gecko.driver", "C:\\geckodriver.exe");
 		startDriver();
 		driver.manage().window().maximize();
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, 60);
 			WebDriverWait waitf = new WebDriverWait(driver, 10);
-			String baseUrl = "https://app.x-celera.com/xcelera-app/secure/execution-plans/2306/manage-execution";
+			String baseUrl = "https://app.x-celera.com/xcelera-app/secure/execution-plans/13315/manage-execution";
 
 			// telaLogin
 			String txtUser = "//*[@id=\"Username\"]";
 			String txtPass = "//*[@id=\"Password\"]";
 			String btnLogin = "//button[.='Login']";
+			String homeBrand = "//img[@alt='Xcelera - Home']";
 
 			driver.get(baseUrl);
 			try {
@@ -60,7 +79,7 @@ public class GeradorDeReport {
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(txtPass))).sendKeys(password);
 			wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(btnLogin))).click();
 			esperar(5);
-//			wait.until(ExpectedConditions.invisibilityOf(driver.findElement(By.xpath(btnAcessProject))));
+			wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(homeBrand)));
 			driver.get(baseUrl);
 
 			String lblFailed = "//td[.='Failed']/..";

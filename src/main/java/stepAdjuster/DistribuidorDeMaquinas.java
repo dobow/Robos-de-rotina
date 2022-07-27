@@ -1,7 +1,10 @@
 package stepAdjuster;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -21,8 +24,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class DistribuidorDeMaquinas {
 	private static WebDriver driver = null;
 	private static Boolean sequencial = true;
-	final static String login = "";
-	final static String password = "";
+	static String login = "";
+	static String password = "";
 	final static String computerList[] = { "HDIWUFTAPP01 ", "HDIWUFTAPP01A", "HDIWUFTAPP01B", "HDIWUFTAPP01C",
 			"HDIWUFTAPP01D", "HDIWUFTAPP02 ", "HDIWUFTAPP02A", "HDIWUFTAPP02B", "HDIWUFTAPP02C", "HDIWUFTAPP02D",
 			"HDIWUFTAPP03 ", "HDIWUFTAPP03A", "HDIWUFTAPP03B", "HDIWUFTAPP03C", "HDIWUFTAPP03D", "HDIWUFTAPP04 ",
@@ -35,26 +38,31 @@ public class DistribuidorDeMaquinas {
 			"HDIWUFTAPP11B", "HDIWUFTAPP11C", "HDIWUFTAPP11D", "HDIWUFTAPP12 ", "HDIWUFTAPP12A", "HDIWUFTAPP12B",
 			"HDIWUFTAPP12C", "HDIWUFTAPP12D", "HDIWUFTAPP15 ", "HDIWUFTAPP15A", "HDIWUFTAPP15B", "HDIWUFTAPP15C",
 			"HDIWUFTAPP15D", "HDIWUFTAPP15E" };
-//	
-//	final static String computerList[] = { "HDIWUFTAPP01 ", "HDIWUFTAPP01A", "HDIWUFTAPP01B", "HDIWUFTAPP01C",
-//			"HDIWUFTAPP01D", "HDIWUFTAPP02 ", "HDIWUFTAPP02A", "HDIWUFTAPP02B", "HDIWUFTAPP02C", "HDIWUFTAPP02D",
-//			"HDIWUFTAPP03 ", "HDIWUFTAPP03A", "HDIWUFTAPP03B", "HDIWUFTAPP03C", "HDIWUFTAPP03D", "HDIWUFTAPP04 ",
-//			"HDIWUFTAPP04A", "HDIWUFTAPP04B", "HDIWUFTAPP04C", "HDIWUFTAPP04D", "HDIWUFTAPP05 ", "HDIWUFTAPP05A",
-//			"HDIWUFTAPP05B", "HDIWUFTAPP05C", "HDIWUFTAPP05D", "HDIWUFTAPP06 ", "HDIWUFTAPP06A", "HDIWUFTAPP06B",
-//			"HDIWUFTAPP06C", "HDIWUFTAPP06D", "HDIWUFTAPP07 ", "HDIWUFTAPP07A", "HDIWUFTAPP07B", "HDIWUFTAPP07C",
-//			"HDIWUFTAPP07D", "HDIWUFTAPP08 ", "HDIWUFTAPP08A", "HDIWUFTAPP08B", "HDIWUFTAPP08C", "HDIWUFTAPP08D",
-//			"HDIWUFTAPP09 ", "HDIWUFTAPP09A", "HDIWUFTAPP09B", "HDIWUFTAPP09C", "HDIWUFTAPP09D", "HDIWUFTAPP10 ",
-//			"HDIWUFTAPP10A", "HDIWUFTAPP10B", "HDIWUFTAPP10C", "HDIWUFTAPP10D" };
+
+	public static Properties getProp() throws IOException {
+		Properties props = new Properties();
+		FileInputStream file = new FileInputStream("./configs/config.properties");
+		props.load(file);
+		return props;
+
+	}
 
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws InterruptedException {
+		Properties prop;
+		try {
+			prop = getProp();
+			login = prop.getProperty("app.login");
+			password = prop.getProperty("app.senha");
+		} catch (IOException e2) {
+		}
 		System.setProperty("webdriver.gecko.driver", "C:\\geckodriver.exe");
 		startDriver();
 		driver.manage().window().maximize();
 		try {
 			WebDriverWait wait = new WebDriverWait(driver, 60);
 			WebDriverWait waitf = new WebDriverWait(driver, 10);
-			String baseUrl = "https://app.x-celera.com/xcelera-app/secure/execution-plans/13293";
+			String baseUrl = "https://app.x-celera.com/xcelera-app/secure/execution-plans/2306";
 
 			// telaLogin
 			String txtUser = "//*[@id=\"Username\"]";
@@ -80,7 +88,8 @@ public class DistribuidorDeMaquinas {
 
 			String cbbComputers = "//div[.=' Test Case ']/../../td/select[@id='Worker']";
 //			wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(cbbComputers)));
-			esperar(5000);
+			wait.until(ExpectedConditions.elementToBeClickable(By.xpath(cbbComputers)));
+//			esperar(5000);
 			List<WebElement> listCbbComputers = driver.findElements(By.xpath(cbbComputers));
 
 			Random rdn = new Random();
@@ -113,8 +122,10 @@ public class DistribuidorDeMaquinas {
 
 	private static void esperar(int sec) {
 		try {
+			System.out.println("aguardando " + sec + " segundos");
 			Thread.sleep(sec * 1000);
 		} catch (Exception ignorar) {
+			ignorar.printStackTrace();
 		}
 	}
 

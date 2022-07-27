@@ -7,8 +7,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,14 +28,27 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import io.opentelemetry.exporter.logging.SystemOutLogExporter;
-
 public class App2 {
 	private static WebDriver driver = null;
-	final static String login = "";
-	final static String password = "";
+	static String login = "";
+	static String password = "";
+
+	public static Properties getProp() throws IOException {
+		Properties props = new Properties();
+		FileInputStream file = new FileInputStream("./configs/config.properties");
+		props.load(file);
+		return props;
+
+	}
 
 	public static void main(String[] args) throws InterruptedException {
+		Properties prop;
+		try {
+			prop = getProp();
+			login = prop.getProperty("app.login");
+			password = prop.getProperty("app.senha");
+		} catch (IOException e2) {
+		}
 		System.setProperty("webdriver.gecko.driver", "C:\\geckodriver.exe");
 		startDriver();
 		driver.manage().window().maximize();
